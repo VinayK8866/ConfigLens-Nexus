@@ -7,7 +7,7 @@
      This is required for "Check for Updates" to detect newer releases.
    -->
    <feature
-         url="features/com.configlens.feature_1.0.0.qualifier.jar"
+         url="features/com.configlens.feature_1.0.1.qualifier.jar"
          id="com.configlens.feature"
          version="0.0.0">
       <category name="com.configlens.category.tools"/>

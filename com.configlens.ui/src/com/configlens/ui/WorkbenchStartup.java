@@ -29,7 +29,28 @@ public final class WorkbenchStartup implements IStartup {
       IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
       if (window != null) {
         window.getPartService().addPartListener(new EditorLifecycleManager());
+        
+        // Show Welcome Page on first launch
+        org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+        if (!store.getBoolean("WELCOME_PAGE_SHOWN")) {
+          showWelcomePage();
+          store.setValue("WELCOME_PAGE_SHOWN", true);
+        }
       }
     });
+  }
+
+  private void showWelcomePage() {
+    try {
+      java.net.URL url = org.eclipse.core.runtime.FileLocator.find(
+          org.osgi.framework.FrameworkUtil.getBundle(WorkbenchStartup.class),
+          new org.eclipse.core.runtime.Path("intro/WelcomePage.html"), null);
+      if (url != null) {
+        org.eclipse.ui.PlatformUI.getWorkbench().getBrowserSupport().createBrowser("configlens.welcome").openURL(
+            org.eclipse.core.runtime.FileLocator.toFileURL(url));
+      }
+    } catch (Exception e) {
+      // Ignore if browser cannot be opened
+    }
   }
 }

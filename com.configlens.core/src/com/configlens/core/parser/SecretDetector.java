@@ -65,7 +65,7 @@ public final class SecretDetector {
             lineNumber,
             matcher.start(),
             matcher.end(),
-            "Potential " + type + " detected."
+            "Potential " + type + " detected. If this is not a secret, append '# configlens-ignore' to the line."
         ));
       }
     }
@@ -92,7 +92,7 @@ public final class SecretDetector {
             lineNumber,
             matcher.start(matcher.group(2) != null ? 2 : 3),
             matcher.end(matcher.group(2) != null ? 2 : 3),
-            "High-entropy string detected (possible token)."
+            "High-entropy string detected (possible token). If this is not a secret, append '# configlens-ignore' to the line."
         ));
       }
     }

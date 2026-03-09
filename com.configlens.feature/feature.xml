@@ -2,7 +2,7 @@
 <feature
       id="com.configlens.feature"
       label="ConfigLens — Configuration Intelligence"
-      version="1.0.0.qualifier"
+      version="1.0.1.qualifier"
       provider-name="ConfigLens Project"
       plugin="com.configlens.ui">
 

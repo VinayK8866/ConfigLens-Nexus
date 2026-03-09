@@ -177,6 +177,11 @@ public final class EditorLifecycleManager implements IPartListener2 {
 					YamlIndentationHandler handler = new YamlIndentationHandler();
 					viewer.getTextWidget().addVerifyListener(handler);
 				}
+				
+				// Disable default text folding (removes erratic white line and minus marks)
+				if (viewer instanceof org.eclipse.jface.text.source.projection.ProjectionViewer projViewer) {
+					projViewer.doOperation(org.eclipse.jface.text.source.projection.ProjectionViewer.TOGGLE);
+				}
 			}
 		}
 	}
