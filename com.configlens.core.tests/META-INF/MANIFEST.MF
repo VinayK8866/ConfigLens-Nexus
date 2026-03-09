@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ConfigLens Core Tests
+Bundle-SymbolicName: com.configlens.core.tests
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: com.configlens.core
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: com.configlens.core.tests
+Require-Bundle: org.junit

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="com.configlens.feature"
+      label="ConfigLens — Configuration Intelligence"
+      version="1.0.0.qualifier"
+      provider-name="ConfigLens Project"
+      plugin="com.configlens.ui">
+
+   <description url="https://github.com/configlens/configlens">
+      ConfigLens brings intelligent configuration-file analysis directly into
+      Eclipse. It parses YAML, JSON, and .env files with a streaming engine,
+      provides breadcrumb navigation, inline CodeLens ghost-text previews,
+      real-time secret detection via 24+ regex patterns, AI-assisted structural
+      analysis (opt-in, Gemini Pro), and an interruptible &quot;100MB-safe&quot; parser
+      that keeps the IDE responsive even for massive files.
+   </description>
+
+   <copyright url="https://github.com/configlens/configlens/blob/main/LICENSE">
+      Copyright (c) 2024-2026 ConfigLens Contributors.
+      All rights reserved. This program and the accompanying materials
+      are made available under the terms of the Eclipse Public License v2.0.
+   </copyright>
+
+   <license url="https://www.eclipse.org/legal/epl-2.0/">
+      Eclipse Public License - v 2.0
+
+      THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS ECLIPSE
+      PUBLIC LICENSE (&quot;AGREEMENT&quot;). ANY USE, REPRODUCTION OR DISTRIBUTION
+      OF THE PROGRAM CONSTITUTES RECIPIENT&apos;S ACCEPTANCE OF THIS AGREEMENT.
+
+      https://www.eclipse.org/legal/epl-2.0/
+   </license>
+
+   <url>
+      <update label="ConfigLens Update Site"
+              url="https://raw.githubusercontent.com/configlens/configlens/main/updatesite/"/>
+      <discovery label="ConfigLens Discovery Site"
+                 url="https://raw.githubusercontent.com/configlens/configlens/main/updatesite/"/>
+   </url>
+
+   <!--
+     Core bundle: streaming parsers, secret detection engine,
+     ConfigNode / ConfigTree Trie model, PathResolver, EnvCache, PrivacyFilter.
+     All Eclipse-independent; LSP-ready.
+   -->
+   <plugin
+         id="com.configlens.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <!--
+     UI bundle: Eclipse-specific integrations — BreadcrumbInjector,
+     GhostValuePainter, SecretMarkerManager, FlatView, AiAnalysisJob,
+     YamlIndentationHandler, WorkbenchStartup, PreferencePage.
+   -->
+   <plugin
+         id="com.configlens.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,17 @@
+# Eclipse client-side install / P2 engine metadata
+# ---------------------------------------------------
+# These properties are baked into the repository's artifact.xml by Tycho.
+
+# Tells p2 touchpoint to not unpack the bundles (they stay as JARs)
+instructions.install=\
+  org.eclipse.equinox.p2.touchpoint.eclipse.setStartLevel(startLevel:4);\
+  org.eclipse.equinox.p2.touchpoint.eclipse.markStarted(started:true);
+
+# Repository branding shown in "Install New Software" wizard
+org.eclipse.equinox.p2.name=ConfigLens — Configuration Intelligence
+org.eclipse.equinox.p2.description=Intelligent configuration-file analysis for Eclipse. \
+  Supports YAML, JSON, and .env with breadcrumbs, ghost-text CodeLens, \
+  secret detection, AI suggestions, and 100MB-safe streaming parsers.
+org.eclipse.equinox.p2.provider=ConfigLens Project
+org.eclipse.equinox.p2.contact=https://github.com/configlens/configlens/issues
+org.eclipse.equinox.p2.doc.url=https://github.com/configlens/configlens#readme

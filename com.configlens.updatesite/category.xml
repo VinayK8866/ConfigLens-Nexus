@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+
+   <!--
+     Feature reference.  The version attribute uses "0.0.0" so that
+     Tycho automatically substitutes the built qualifier version.
+     This is required for "Check for Updates" to detect newer releases.
+   -->
+   <feature
+         url="features/com.configlens.feature_1.0.0.qualifier.jar"
+         id="com.configlens.feature"
+         version="0.0.0">
+      <category name="com.configlens.category.tools"/>
+   </feature>
+
+   <!--
+     Category definition.
+     Using "Developer Tools" mirrors the Eclipse Marketplace taxonomy so
+     that the plugin appears in the correct section of the marketplace listing.
+   -->
+   <category-def
+         name="com.configlens.category.tools"
+         label="Developer Tools — Configuration">
+      <description>
+         Tools that enhance the developer experience when working with
+         configuration files (YAML, JSON, .env).  Includes intelligent
+         parsing, navigation, secret detection, and AI-assisted analysis.
+      </description>
+   </category-def>
+
+</site>

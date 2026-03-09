@@ -1,0 +1,37 @@
+name: Eclipse Plugin CI
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build with Maven
+      run: mvn clean verify
+
+    - name: Package Update Site
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      run: mvn package -DskipTests --projects com.configlens.updatesite -am
+
+    - name: Deploy to GitHub Pages
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./com.configlens.updatesite/target/repository

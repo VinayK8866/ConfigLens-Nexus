@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ConfigLens Core
+Bundle-SymbolicName: com.configlens.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: com.configlens.core
+Bundle-ClassPath: .,
+ lib/snakeyaml-engine-2.7.jar,
+ lib/jackson-core-2.16.1.jar,
+ lib/jackson-databind-2.16.1.jar,
+ lib/jackson-annotations-2.16.1.jar
+Export-Package: com.configlens.core.model,
+ com.configlens.core.parser

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="com.configlens.ui.WorkbenchStartup">
+      </startup>
+   </extension>
+
+   <!-- UI Contribution: Copy Path Actions -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="com.configlens.ui.menu"
+               label="ConfigLens"
+               icon="icons/logo.png">
+            <command
+                  commandId="com.configlens.ui.command.copyPath"
+                  label="Copy Absolute Path (Spring compatible)"
+                  id="com.configlens.ui.menu.copyAbsolutePath">
+               <parameter
+                     name="com.configlens.ui.param.mode"
+                     value="absolute">
+               </parameter>
+            </command>
+            <command
+                  commandId="com.configlens.ui.command.copyPath"
+                  label="Copy Key Path (Dot notation)"
+                  id="com.configlens.ui.menu.copyPath">
+               <parameter
+                     name="com.configlens.ui.param.mode"
+                     value="dot">
+               </parameter>
+            </command>
+            <command
+                  commandId="com.configlens.ui.command.copyJsonPath"
+                  label="Copy JSONPath"
+                  id="com.configlens.ui.menu.copyJsonPath">
+               <parameter
+                     name="com.configlens.ui.param.mode"
+                     value="jsonpath">
+               </parameter>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+   <!-- Command definitions -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="com.configlens.ui.command.copyPath"
+            name="Copy Configuration Path">
+      </command>
+      <command
+            id="com.configlens.ui.command.copyJsonPath"
+            name="Copy JSONPath">
+      </command>
+   </extension>
+
+   <!-- Handler definitions -->
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="com.configlens.ui.editor.CopyPathHandler"
+            commandId="com.configlens.ui.command.copyPath">
+      </handler>
+      <handler
+            class="com.configlens.ui.editor.CopyPathHandler"
+            commandId="com.configlens.ui.command.copyJsonPath">
+      </handler>
+   </extension>
+   <!-- Annotations for Secret Detection -->
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            name="com.configlens.ui.secretAnnotation"
+            label="Potential Secret"
+            markerType="org.eclipse.core.resources.problemmarker">
+      </type>
+      <type
+            name="com.configlens.ui.ghostAnnotation"
+            label="Environment Value Overlay">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="com.configlens.ui.secretAnnotation"
+            label="Potential Secret"
+            icon="icons/secret.png"
+            textPreferenceKey="com.configlens.ui.secretAnnotation.text"
+            textPreferenceValue="true"
+            highlightPreferenceKey="com.configlens.ui.secretAnnotation.highlight"
+            highlightPreferenceValue="true"
+            verticalRulerPreferenceKey="com.configlens.ui.secretAnnotation.verticalRuler"
+            verticalRulerPreferenceValue="true"
+            colorPreferenceKey="com.configlens.ui.secretAnnotation.color"
+            colorPreferenceValue="255,255,0"
+            overviewRulerPreferenceKey="com.configlens.ui.secretAnnotation.overviewRuler"
+            overviewRulerPreferenceValue="true">
+      </specification>
+   </extension>
+
+   <!-- View definitions -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="com.configlens.ui.category"
+            name="ConfigLens">
+      </category>
+      <view
+            id="com.configlens.ui.views.FlatView"
+            name="ConfigLens: Flat View"
+            icon="icons/logo.png"
+            category="com.configlens.ui.category"
+            class="com.configlens.ui.views.FlatView">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="com.configlens.ui.editor.YamlDocumentSetupParticipant"
+            extensions="yaml,yml">
+      </participant>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.configlens.ui.preferences.ConfigLensPreferencePage"
+            id="com.configlens.ui.preferences.ConfigLensPreferencePage"
+            name="ConfigLens">
+      </page>
+   </extension>
+
+   <extension
+         id="secretMarker"
+         name="Potential Secret"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
+   </extension>
+</plugin>

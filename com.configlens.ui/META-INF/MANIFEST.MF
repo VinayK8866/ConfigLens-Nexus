@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ConfigLens UI
+Bundle-SymbolicName: com.configlens.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.configlens.ui.Activator
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: com.configlens.ui
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.ide,
+ org.eclipse.core.resources,
+ com.configlens.core
+Export-Package: com.configlens.ui.editor,
+ com.configlens.ui.views
