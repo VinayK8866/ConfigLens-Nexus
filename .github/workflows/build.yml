@@ -23,11 +23,11 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn clean verify
+      run: mvn clean verify -Pjgit-ts
 
     - name: Package Update Site
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      run: mvn package -DskipTests --projects com.configlens.updatesite -am
+      run: mvn package -DskipTests --projects com.configlens.updatesite -am -Pjgit-ts
 
     - name: Deploy to GitHub Pages
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
