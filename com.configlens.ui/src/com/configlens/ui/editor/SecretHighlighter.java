@@ -58,6 +58,20 @@ public final class SecretHighlighter {
 
 	private void scan(ConfigNode node, IAnnotationModel model, IDocument document) {
 		if (node.getValue().isPresent()) {
+			try {
+				int line = node.getStartLine() - 1;
+				if (line >= 0 && line < document.getNumberOfLines()) {
+					int lineOffset = document.getLineOffset(line);
+					int lineLength = document.getLineLength(line);
+					String lineText = document.get(lineOffset, lineLength);
+					
+					// Respect ignore comment in real-time highlighter
+					if (lineText.contains("configlens-ignore")) {
+						return;
+					}
+				}
+			} catch (Exception e) {}
+
 			if (detector.isSecret(node.getKey(), node.getValue().get().toString())) {
 				addAnnotation(node, model, document);
 			}
@@ -73,11 +87,18 @@ public final class SecretHighlighter {
 			if (line < 0 || line >= document.getNumberOfLines())
 				return;
 
-			int offset = document.getLineOffset(line);
-			int length = document.getLineLength(line);
+			int lineOffset = document.getLineOffset(line);
+			
+			// Use precise start/end columns to only highlight the value, not the entire line/key
+			int start = lineOffset + node.getStartColumn();
+			int length = node.getEndColumn() - node.getStartColumn();
+			
+			if (length <= 0) {
+				length = document.getLineLength(line) - node.getStartColumn();
+			}
 
 			Annotation ann = new Annotation(ANNOTATION_TYPE, false, "Potential secret detected: " + node.getKey());
-			model.addAnnotation(ann, new Position(offset, length));
+			model.addAnnotation(ann, new Position(start, length));
 		} catch (Exception e) {
 		}
 	}

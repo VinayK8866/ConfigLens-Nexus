@@ -24,20 +24,42 @@ public final class WorkbenchStartup implements IStartup {
 
   @Override
   public void earlyStartup() {
-    // Register lifecycle manager to catch existing and new editors
-    Display.getDefault().asyncExec(() -> {
-      IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-      if (window != null) {
-        window.getPartService().addPartListener(new EditorLifecycleManager());
-        
-        // Show Welcome Page on first launch
-        org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-        if (!store.getBoolean("WELCOME_PAGE_SHOWN")) {
-          showWelcomePage();
-          store.setValue("WELCOME_PAGE_SHOWN", true);
-        }
+    // Schedule startup logic in a non-blocking Job to prevent Eclipse hangs
+    Job startupJob = new Job("ConfigLens: Startup Onboarding") {
+      @Override
+      protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+        Display.getDefault().asyncExec(() -> {
+          IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+          if (window != null) {
+            window.getPartService().addPartListener(new EditorLifecycleManager());
+            
+            // Show Welcome Page on first launch with a generous delay
+            org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+            if (!store.getBoolean("WELCOME_PAGE_SHOWN")) {
+              showWelcomePageAfterDelay();
+              store.setValue("WELCOME_PAGE_SHOWN", true);
+            }
+          }
+        });
+        return Status.OK_STATUS;
       }
-    });
+    };
+    startupJob.setSystem(true);
+    startupJob.schedule(2000); // 2 second delay to let Eclipse initialize
+  }
+
+  private void showWelcomePageAfterDelay() {
+    Job welcomeJob = new Job("ConfigLens: Showing Welcome Page") {
+      @Override
+      protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+        Display.getDefault().asyncExec(() -> {
+          showWelcomePage();
+        });
+        return Status.OK_STATUS;
+      }
+    };
+    welcomeJob.setSystem(true);
+    welcomeJob.schedule(5000); // 5 second delay to ensure UI is ready
   }
 
   private void showWelcomePage() {

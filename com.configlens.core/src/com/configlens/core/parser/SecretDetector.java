@@ -34,8 +34,8 @@ public final class SecretDetector {
     for (Pattern p : SecretPatternLibrary.PATTERNS.values()) {
         if (p.matcher(value).find()) return true;
     }
-    // Check entropy
-    return calculateEntropy(value) > 4.5 && value.length() > 20;
+    // Check entropy - stricter threshold to avoid false positives on config keys/paths
+    return calculateEntropy(value) > 5.5 && value.length() > 25;
   }
 
   /**
