@@ -25,11 +25,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -42,6 +45,9 @@ public final class FlatView extends ViewPart {
 
   public static final String ID = "com.configlens.ui.views.FlatView";
 
+  // Static reference so the parse job can notify the view when data is ready
+  private static FlatView instance;
+
   private TableViewer viewer;
   private Text filterText;
   private IPartListener partListener;
@@ -49,8 +55,23 @@ public final class FlatView extends ViewPart {
   private List<ConfigNode> allNodes = new ArrayList<>();
   private List<ConfigNode> filteredNodes = new ArrayList<>();
 
+  /**
+   * Called by the parse job when a new tree is available for any editor.
+   * Refreshes this view if it is currently showing that editor's data.
+   */
+  public static void notifyTreeUpdated(IEditorInput input) {
+    FlatView view = instance;
+    if (view == null) return;
+    Display.getDefault().asyncExec(() -> {
+      if (view.viewer != null && !view.viewer.getTable().isDisposed()) {
+        view.refreshData();
+      }
+    });
+  }
+
   @Override
   public void createPartControl(Composite parent) {
+    instance = this;
     parent.setLayout(new GridLayout(1, false));
 
     // 1. Filter Text
@@ -137,8 +158,7 @@ public final class FlatView extends ViewPart {
     if (activeEditor instanceof ITextEditor textEditor) {
       try {
         IDocument document = textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
-        if (document != null) {
-          // ConfigNode uses 1-based lines, IDocument uses 0-based
+        if (document != null && node.getStartLine() > 0) {
           int lineOffset = document.getLineOffset(node.getStartLine() - 1);
           textEditor.selectAndReveal(lineOffset, 0);
         }
@@ -152,14 +172,26 @@ public final class FlatView extends ViewPart {
     partListener = new IPartListener() {
       @Override
       public void partActivated(IWorkbenchPart part) {
-        if (part instanceof IEditorPart) refreshData();
+        if (part instanceof IEditorPart) {
+          // Refresh immediately and again after a short delay for async parse
+          refreshData();
+          Display.getDefault().timerExec(800, () -> {
+            if (viewer != null && !viewer.getTable().isDisposed()) refreshData();
+          });
+        }
       }
       @Override public void partBroughtToTop(IWorkbenchPart part) {}
       @Override public void partClosed(IWorkbenchPart part) {
         if (part instanceof IEditorPart) refreshData();
       }
       @Override public void partDeactivated(IWorkbenchPart part) {}
-      @Override public void partOpened(IWorkbenchPart part) {}
+      @Override public void partOpened(IWorkbenchPart part) {
+        if (part instanceof IEditorPart) {
+          Display.getDefault().timerExec(1500, () -> {
+            if (viewer != null && !viewer.getTable().isDisposed()) refreshData();
+          });
+        }
+      }
     };
     getSite().getWorkbenchWindow().getPartService().addPartListener(partListener);
   }
@@ -186,6 +218,7 @@ public final class FlatView extends ViewPart {
 
   @Override
   public void dispose() {
+    instance = null;
     if (partListener != null) {
       getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
     }

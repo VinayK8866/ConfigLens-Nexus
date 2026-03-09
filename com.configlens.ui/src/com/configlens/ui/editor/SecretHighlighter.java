@@ -58,24 +58,25 @@ public final class SecretHighlighter {
 
 	private void scan(ConfigNode node, IAnnotationModel model, IDocument document) {
 		if (node.getValue().isPresent()) {
+			boolean ignored = false;
 			try {
 				int line = node.getStartLine() - 1;
 				if (line >= 0 && line < document.getNumberOfLines()) {
 					int lineOffset = document.getLineOffset(line);
 					int lineLength = document.getLineLength(line);
 					String lineText = document.get(lineOffset, lineLength);
-					
-					// Respect ignore comment in real-time highlighter
+					// Respect ignore comment on this specific line only
 					if (lineText.contains("configlens-ignore")) {
-						return;
+						ignored = true;
 					}
 				}
 			} catch (Exception e) {}
 
-			if (detector.isSecret(node.getKey(), node.getValue().get().toString())) {
+			if (!ignored && detector.isSecret(node.getKey(), node.getValue().get().toString())) {
 				addAnnotation(node, model, document);
 			}
 		}
+		// Always recurse into children regardless of whether this node was ignored
 		for (ConfigNode child : node.getChildren()) {
 			scan(child, model, document);
 		}

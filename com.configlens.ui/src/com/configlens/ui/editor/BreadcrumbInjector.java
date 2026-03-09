@@ -47,24 +47,28 @@ public final class BreadcrumbInjector {
 
 		// Standardize parent layout to GridLayout to support header/body separation
 		if (!(parent.getLayout() instanceof GridLayout)) {
-			GridLayout layout = new GridLayout(1, false);
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.verticalSpacing = 0;
-			parent.setLayout(layout);
+			try {
+				GridLayout layout = new GridLayout(1, false);
+				layout.marginHeight = 0;
+				layout.marginWidth = 0;
+				layout.verticalSpacing = 0;
+				parent.setLayout(layout);
+			} catch (Exception e) {
+				// Fallback: If we can't change layout, injection might look poor but won't crash
+			}
 		}
 
 		// Create breadcrumb at the top
 		BreadcrumbComposite breadcrumb = new BreadcrumbComposite(parent, SWT.NONE);
 		breadcrumb.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-		// Ensure it's visually at the top
+		// Fix layout for the editor body itself
+		if (editorComposite.getLayoutData() == null || !(editorComposite.getLayoutData() instanceof GridData)) {
+			editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		}
+
 		breadcrumb.moveAbove(editorComposite);
-
-		// Editor body must fill the remaining space
-		editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		parent.layout(true);
+		parent.layout(true, true);
 		return breadcrumb;
 	}
 }

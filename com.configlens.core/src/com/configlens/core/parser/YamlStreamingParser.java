@@ -116,8 +116,8 @@ public final class YamlStreamingParser {
 						String nodePath = generatePath(currentFrame.path, pendingKey);
 						ConfigNode scalarNode = new ConfigNode.Builder(pendingKey, nodePath)
 								.value(scalar.getValue())
-								.startLine(pendingKeyStartLine)
-								.startColumn(pendingKeyStartCol)
+								.startLine(scalar.getStartMark().map(m -> m.getLine() + 1).orElse(0))
+								.startColumn(scalar.getStartMark().map(m -> m.getColumn()).orElse(0))
 								.endLine(scalar.getEndMark().map(m -> m.getLine() + 1).orElse(0))
 								.endColumn(scalar.getEndMark().map(m -> m.getColumn()).orElse(0))
 								.build();

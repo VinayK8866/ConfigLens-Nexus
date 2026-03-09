@@ -151,15 +151,25 @@ public final class BreadcrumbComposite extends Composite {
 		}
 	}
 
+	@Override
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		GC gc = new GC(this);
+		int height = gc.getFontMetrics().getHeight() + 10;
+		gc.dispose();
+		return new Point(wHint != SWT.DEFAULT ? wHint : 200, height);
+	}
+
 	private void onMouseDown(MouseEvent e) {
 		if (e.button == 1 && hoveredIndex != -1 && listener != null) {
-			// Adjustment because we skip 'root' in rendering but pathNodes includes it
-			int actualIndex = hoveredIndex;
-			if (!pathNodes.isEmpty() && "root".equals(pathNodes.get(0).getKey())) {
-				actualIndex++;
-			}
-			if (actualIndex < pathNodes.size()) {
-				listener.nodeSelected(pathNodes.get(actualIndex));
+			// Find the correct node by matching the render key (skipping 'root')
+			int currentRenderIdx = 0;
+			for (int i = 0; i < pathNodes.size(); i++) {
+				if ("root".equals(pathNodes.get(i).getKey())) continue;
+				if (currentRenderIdx == hoveredIndex) {
+					listener.nodeSelected(pathNodes.get(i));
+					return;
+				}
+				currentRenderIdx++;
 			}
 		}
 	}

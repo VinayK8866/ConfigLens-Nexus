@@ -153,6 +153,8 @@ public final class EditorLifecycleManager implements IPartListener2 {
 
 				if (tree != null) {
 					new AiAnalysisJob(editor, tree).schedule();
+					// Notify FlatView immediately so it can populate without waiting for focus
+					com.configlens.ui.views.FlatView.notifyTreeUpdated(editor.getEditorInput());
 					Display.getDefault().asyncExec(() -> {
 						if (selectionListeners.containsKey(editor)) {
 							secretHighlighter.highlightSecrets(editor, tree.getRootNode());
@@ -180,13 +182,6 @@ public final class EditorLifecycleManager implements IPartListener2 {
 				if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
 					YamlIndentationHandler handler = new YamlIndentationHandler();
 					viewer.getTextWidget().addVerifyListener(handler);
-				}
-				
-				// Safely disable folding for this editor session to reduce UI noise
-				if (viewer instanceof org.eclipse.jface.text.source.projection.ProjectionViewer projViewer) {
-					if (projViewer.canDoOperation(org.eclipse.jface.text.source.projection.ProjectionViewer.TOGGLE)) {
-						projViewer.doOperation(org.eclipse.jface.text.source.projection.ProjectionViewer.TOGGLE);
-					}
 				}
 			}
 		}

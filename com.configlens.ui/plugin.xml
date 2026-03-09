@@ -17,6 +17,15 @@
                id="com.configlens.ui.menu"
                label="ConfigLens"
                icon="icons/logo.png">
+            <visibleWhen checkEnabled="false">
+               <with variable="activeEditorInput">
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        args=".yaml,.yml,.json,.env"
+                        value="*">
+                  </test>
+               </with>
+            </visibleWhen>
             <command
                   commandId="com.configlens.ui.command.copyPath"
                   label="Copy Absolute Path (Spring compatible)"
