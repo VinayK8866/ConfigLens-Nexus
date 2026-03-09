@@ -29,8 +29,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension2;
 
@@ -178,9 +182,11 @@ public final class EditorLifecycleManager implements IPartListener2 {
 					viewer.getTextWidget().addVerifyListener(handler);
 				}
 				
-				// Disable default text folding ruler (removes erratic white line)
-				if (editor instanceof org.eclipse.ui.texteditor.AbstractDecoratedTextEditor decoratedEditor) {
-                    decoratedEditor.setShowFoldingRuler(false);
+				// Safely disable folding for this editor session to reduce UI noise
+				if (viewer instanceof org.eclipse.jface.text.source.projection.ProjectionViewer projViewer) {
+					if (projViewer.canDoOperation(org.eclipse.jface.text.source.projection.ProjectionViewer.TOGGLE)) {
+						projViewer.doOperation(org.eclipse.jface.text.source.projection.ProjectionViewer.TOGGLE);
+					}
 				}
 			}
 		}

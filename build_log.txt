@@ -1,0 +1,241 @@
+[INFO] Scanning for projects...
+[INFO] ### Using TychoRepositoryTransport for remote P2 access ###
+[INFO]     Cache location:         /home/user/.m2/repository/.cache/tycho
+[INFO]     Transport mode:         online
+[INFO]     Update mode:            cache first
+[INFO]     Minimum cache duration: 60 minutes
+[INFO]       (you can configure this with -Dtycho.p2.transport.min-cache-minutes=<desired minimum cache duration>)
+[INFO] Adding repository https://download.eclipse.org/releases/2023-06
+[INFO] Resolving dependencies of MavenProject: com.configlens:com.configlens.core:1.0.2-SNAPSHOT @ /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/pom.xml
+[INFO] Resolving dependencies of MavenProject: com.configlens:com.configlens.core.tests:1.0.2-SNAPSHOT @ /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/pom.xml
+[INFO] Resolving dependencies of MavenProject: com.configlens:com.configlens.ui:1.0.2-SNAPSHOT @ /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/pom.xml
+[INFO] Resolving dependencies of MavenProject: com.configlens:com.configlens.feature:1.0.2-SNAPSHOT @ /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.feature/pom.xml
+[INFO] Resolving dependencies of MavenProject: com.configlens:com.configlens.updatesite:1.0.2-SNAPSHOT @ /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.updatesite/pom.xml
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] ConfigLens — Configuration Intelligence for Eclipse                [pom]
+[INFO] com.configlens.core                                     [eclipse-plugin]
+[INFO] com.configlens.core.tests                          [eclipse-test-plugin]
+[INFO] com.configlens.ui                                       [eclipse-plugin]
+[INFO] com.configlens.feature                                 [eclipse-feature]
+[INFO] com.configlens.updatesite                           [eclipse-repository]
+[INFO] 
+[INFO] -----------------< com.configlens:com.configlens.root >-----------------
+[INFO] Building ConfigLens — Configuration Intelligence for Eclipse 1.0.2-SNAPSHOT [1/6]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ com.configlens.root ---
+[INFO] 
+[INFO] --- tycho-source-plugin:3.0.4:plugin-source (plugin-source) @ com.configlens.root ---
+[INFO] 
+[INFO] -----------------< com.configlens:com.configlens.core >-----------------
+[INFO] Building com.configlens.core 1.0.2-SNAPSHOT                        [2/6]
+[INFO] ---------------------------[ eclipse-plugin ]---------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ com.configlens.core ---
+[INFO] Deleting /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:build-qualifier (default-build-qualifier) @ com.configlens.core ---
+[INFO] The project's OSGi version is 1.0.2.202603091016
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-id (default-validate-id) @ com.configlens.core ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-version (default-validate-version) @ com.configlens.core ---
+[INFO] 
+[INFO] --- maven-dependency-plugin:3.6.1:copy (copy-dependencies) @ com.configlens.core ---
+[INFO] Configured Artifact: org.snakeyaml:snakeyaml-engine:2.7:jar
+[INFO] Configured Artifact: com.fasterxml.jackson.core:jackson-core:2.16.1:jar
+[INFO] Configured Artifact: com.fasterxml.jackson.core:jackson-databind:2.16.1:jar
+[INFO] Configured Artifact: com.fasterxml.jackson.core:jackson-annotations:2.16.1:jar
+[INFO] org.snakeyaml:snakeyaml-engine:2.7:jar already exists in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/lib
+[INFO] com.fasterxml.jackson.core:jackson-core:2.16.1:jar already exists in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/lib
+[INFO] com.fasterxml.jackson.core:jackson-databind:2.16.1:jar already exists in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/lib
+[INFO] com.fasterxml.jackson.core:jackson-annotations:2.16.1:jar already exists in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/lib
+[INFO] 
+[INFO] --- target-platform-configuration:3.0.4:target-platform (default-target-platform) @ com.configlens.core ---
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:validate-classpath (default-validate-classpath) @ com.configlens.core ---
+[INFO] Resolving class path of com.configlens.core...
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ com.configlens.core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/src/main/resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:compile (default-compile) @ com.configlens.core ---
+[WARNING] Parameter 'useProjectSettings' is set to true, but preferences file '/home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/.settings/org.eclipse.jdt.core.prefs' could not be found!
+[INFO] Compiling 18 source files to /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/target/classes
+[INFO] 
+[INFO] --- tycho-ds-plugin:3.0.4:declarative-services (default-declarative-services) @ com.configlens.core ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ com.configlens.core ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/src/test/resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:testCompile (default-testCompile) @ com.configlens.core ---
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0-M5:test (default-test) @ com.configlens.core ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:update-consumer-pom (default-update-consumer-pom) @ com.configlens.core ---
+[INFO] 
+[INFO] --- tycho-source-plugin:3.0.4:plugin-source (plugin-source) @ com.configlens.core ---
+[WARNING] Bundle-Vendor header not found in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/META-INF/MANIFEST.MF, fallback to 'unknown' for source bundle
+[INFO] Building jar: /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/target/com.configlens.core-1.0.2-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:package-plugin (default-package-plugin) @ com.configlens.core ---
+[INFO] Building jar: /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core/target/com.configlens.core-1.0.2-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:3.0.4:p2-metadata-default (default-p2-metadata-default) @ com.configlens.core ---
+[INFO] 
+[INFO] --- tycho-surefire-plugin:3.0.4:integration-test (default-integration-test) @ com.configlens.core ---
+[INFO] Skipping tests
+[INFO] 
+[INFO] --- maven-failsafe-plugin:3.0.0-M5:verify (default-verify) @ com.configlens.core ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --------------< com.configlens:com.configlens.core.tests >--------------
+[INFO] Building com.configlens.core.tests 1.0.2-SNAPSHOT                  [3/6]
+[INFO] ------------------------[ eclipse-test-plugin ]-------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ com.configlens.core.tests ---
+[INFO] Deleting /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:build-qualifier (default-build-qualifier) @ com.configlens.core.tests ---
+[INFO] The project's OSGi version is 1.0.2.202603091016
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-id (default-validate-id) @ com.configlens.core.tests ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-version (default-validate-version) @ com.configlens.core.tests ---
+[INFO] 
+[INFO] --- target-platform-configuration:3.0.4:target-platform (default-target-platform) @ com.configlens.core.tests ---
+[INFO] Maven Artifact org.codehaus.mojo:animal-sniffer-annotations:1.9 is not a bundle and will be ignored, automatic wrapping of such artifacts can be enabled with <pomDependencies>wrapAsBundle</pomDependencies> in target platform configuration.
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:validate-classpath (default-validate-classpath) @ com.configlens.core.tests ---
+[INFO] Resolving class path of com.configlens.core.tests...
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ com.configlens.core.tests ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/src/main/resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:compile (default-compile) @ com.configlens.core.tests ---
+[WARNING] Parameter 'useProjectSettings' is set to true, but preferences file '/home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/.settings/org.eclipse.jdt.core.prefs' could not be found!
+[INFO] Compiling 9 source files to /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/target/classes
+[INFO] 
+[INFO] --- tycho-ds-plugin:3.0.4:declarative-services (default-declarative-services) @ com.configlens.core.tests ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ com.configlens.core.tests ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/src/test/resources
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:update-consumer-pom (default-update-consumer-pom) @ com.configlens.core.tests ---
+[INFO] 
+[INFO] --- tycho-source-plugin:3.0.4:plugin-source (plugin-source) @ com.configlens.core.tests ---
+[WARNING] Bundle-Vendor header not found in /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/META-INF/MANIFEST.MF, fallback to 'unknown' for source bundle
+[INFO] Building jar: /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/target/com.configlens.core.tests-1.0.2-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:package-plugin (default-package-plugin) @ com.configlens.core.tests ---
+[INFO] Building jar: /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.core.tests/target/com.configlens.core.tests-1.0.2-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:3.0.4:p2-metadata-default (default-p2-metadata-default) @ com.configlens.core.tests ---
+[INFO] 
+[INFO] --- tycho-surefire-plugin:3.0.4:test (default-test) @ com.configlens.core.tests ---
+[INFO] Skipping tests
+[INFO] 
+[INFO] ------------------< com.configlens:com.configlens.ui >------------------
+[INFO] Building com.configlens.ui 1.0.2-SNAPSHOT                          [4/6]
+[INFO] ---------------------------[ eclipse-plugin ]---------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ com.configlens.ui ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:build-qualifier (default-build-qualifier) @ com.configlens.ui ---
+[INFO] The project's OSGi version is 1.0.2.202603091016
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-id (default-validate-id) @ com.configlens.ui ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:3.0.4:validate-version (default-validate-version) @ com.configlens.ui ---
+[INFO] 
+[INFO] --- target-platform-configuration:3.0.4:target-platform (default-target-platform) @ com.configlens.ui ---
+[INFO] Maven Artifact org.codehaus.mojo:animal-sniffer-annotations:1.9 is not a bundle and will be ignored, automatic wrapping of such artifacts can be enabled with <pomDependencies>wrapAsBundle</pomDependencies> in target platform configuration.
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:validate-classpath (default-validate-classpath) @ com.configlens.ui ---
+[INFO] Resolving class path of com.configlens.ui...
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ com.configlens.ui ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/main/resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:3.0.4:compile (default-compile) @ com.configlens.ui ---
+[WARNING] Parameter 'useProjectSettings' is set to true, but preferences file '/home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/.settings/org.eclipse.jdt.core.prefs' could not be found!
+[INFO] Compiling 20 source files to /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/target/classes
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for ConfigLens — Configuration Intelligence for Eclipse 1.0.2-SNAPSHOT:
+[INFO] 
+[INFO] ConfigLens — Configuration Intelligence for Eclipse  SUCCESS [  0.026 s]
+[INFO] com.configlens.core ................................ SUCCESS [  2.464 s]
+[INFO] com.configlens.core.tests .......................... SUCCESS [  0.691 s]
+[INFO] com.configlens.ui .................................. FAILURE [  0.926 s]
+[INFO] com.configlens.feature ............................. SKIPPED
+[INFO] com.configlens.updatesite .......................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  9.633 s
+[INFO] Finished at: 2026-03-09T15:46:47+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.eclipse.tycho:tycho-compiler-plugin:3.0.4:compile (default-compile) on project com.configlens.ui: Compilation failure: Compilation failure: 
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/editor/EditorLifecycleManager.java:[183] 
+[ERROR] 	decoratedEditor.setShowFoldingRuler(false);
+[ERROR] 	                ^^^^^^^^^^^^^^^^^^^
+[ERROR] The method setShowFoldingRuler(boolean) is undefined for the type AbstractDecoratedTextEditor
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[28] 
+[ERROR] 	Job startupJob = new Job("ConfigLens: Startup Onboarding") {
+[ERROR] 	^^^
+[ERROR] Job cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[28] 
+[ERROR] 	Job startupJob = new Job("ConfigLens: Startup Onboarding") {
+[ERROR] 	                     ^^^
+[ERROR] Job cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[30] 
+[ERROR] 	protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+[ERROR] 	          ^^^^^^^
+[ERROR] IStatus cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[30] 
+[ERROR] 	protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+[ERROR] 	                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[ERROR] The method run(IProgressMonitor) of type new Job(){} must override or implement a supertype method
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[44] 
+[ERROR] 	return Status.OK_STATUS;
+[ERROR] 	       ^^^^^^
+[ERROR] Status cannot be resolved to a variable
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[52] 
+[ERROR] 	Job welcomeJob = new Job("ConfigLens: Showing Welcome Page") {
+[ERROR] 	^^^
+[ERROR] Job cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[52] 
+[ERROR] 	Job welcomeJob = new Job("ConfigLens: Showing Welcome Page") {
+[ERROR] 	                     ^^^
+[ERROR] Job cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[54] 
+[ERROR] 	protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+[ERROR] 	          ^^^^^^^
+[ERROR] IStatus cannot be resolved to a type
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[54] 
+[ERROR] 	protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
+[ERROR] 	                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[ERROR] The method run(IProgressMonitor) of type new Job(){} must override or implement a supertype method
+[ERROR] /home/user/Downloads/Eclipse Market Place/com.configlens.root/com.configlens.ui/src/com/configlens/ui/WorkbenchStartup.java:[58] 
+[ERROR] 	return Status.OK_STATUS;
+[ERROR] 	       ^^^^^^
+[ERROR] Status cannot be resolved to a variable
+[ERROR] 11 problems (11 errors)
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :com.configlens.ui

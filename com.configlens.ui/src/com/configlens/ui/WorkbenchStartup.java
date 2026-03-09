@@ -12,6 +12,9 @@ package com.configlens.ui;
 
 import com.configlens.ui.editor.EditorLifecycleManager;
 import com.configlens.ui.editor.EnvCacheProjectListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
