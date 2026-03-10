@@ -77,38 +77,49 @@ public final class EditorLifecycleManager implements IPartListener2 {
 	}
 
 	private void installEnhancements(ITextEditor editor) {
-		// 1. Inject Breadcrumb UI
-		BreadcrumbComposite breadcrumb = BreadcrumbInjector.inject(editor);
-		if (breadcrumb == null)
-			return;
+		// IMPORTANT: Mark editor as installed FIRST so we never try twice, even if parts fail
+		selectionListeners.put(editor, null);
 
-		final BreadcrumbManager bcManager = new BreadcrumbManager(breadcrumb);
-		activeBreadcrumbManagers.put(editor, bcManager);
+		// 1. Inject Breadcrumb UI (optional — features do NOT depend on this succeeding)
+		BreadcrumbComposite breadcrumb = null;
+		try {
+			breadcrumb = BreadcrumbInjector.inject(editor);
+		} catch (Exception e) {
+			// Breadcrumb injection failed — all other features still work
+		}
 
-		// 2. Install Selection Listener
-		ConfigSelectionListener selectionListener = new ConfigSelectionListener(editor, bcManager);
-		editor.getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(selectionListener);
-		selectionListeners.put(editor, selectionListener);
+		final BreadcrumbManager bcManager;
+		if (breadcrumb != null) {
+			bcManager = new BreadcrumbManager(breadcrumb);
+			activeBreadcrumbManagers.put(editor, bcManager);
 
-		// 3. Install Ghost Painter
+			// 2. Install Selection Listener for breadcrumb updates
+			ConfigSelectionListener selectionListener = new ConfigSelectionListener(editor, bcManager);
+			editor.getSite().getWorkbenchWindow().getSelectionService().addPostSelectionListener(selectionListener);
+			selectionListeners.put(editor, selectionListener);
+		} else {
+			bcManager = null;
+		}
+
+		// 3. Install Ghost Painter (always, independent of breadcrumb)
 		installGhostPainter(editor);
-		
-		// 3.5 Trigger Initial Ghost Scan
+
+		// 4. Trigger Initial Ghost Scan
 		String projectId = getProjectId(editor);
 		new GhostValueScanner(editor, projectId).schedule();
 
-		// 4. Trigger Initial Parse in Background
+		// 5. Trigger Initial Parse + Secret Scan in Background
 		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		if (doc != null) {
-			// Trigger ghost scan AND secret scan on changes
+			// Listen for changes and re-scan
 			doc.addDocumentListener(new org.eclipse.jface.text.IDocumentListener() {
 				@Override
 				public void documentChanged(org.eclipse.jface.text.DocumentEvent event) {
-					new GhostValueScanner(editor, projectId).schedule(500); // 500ms debounce
+					new GhostValueScanner(editor, projectId).schedule(500);
 					if (editor.getEditorInput() instanceof IFileEditorInput fileInput) {
 						markerManager.scanAndMark(fileInput.getFile(), doc);
 					}
-					triggerParse(editor, doc.get());
+					triggerParse(editor, doc.get(), bcManager);
 				}
 				@Override
 				public void documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent event) {}
@@ -118,49 +129,51 @@ public final class EditorLifecycleManager implements IPartListener2 {
 			if (editor.getEditorInput() instanceof IFileEditorInput fileInput) {
 				markerManager.scanAndMark(fileInput.getFile(), doc);
 			}
-			triggerParse(editor, doc.get());
+			triggerParse(editor, doc.get(), bcManager);
 		}
 	}
 
 	private final Map<IEditorPart, BreadcrumbManager> activeBreadcrumbManagers = new HashMap<>();
 	private final Map<IEditorPart, Job> activeParseJobs = new HashMap<>();
 
-	private void triggerParse(ITextEditor editor, String content) {
+	private void triggerParse(ITextEditor editor, String content, BreadcrumbManager bcManager) {
 		Job existing = activeParseJobs.remove(editor);
 		if (existing != null) {
 			existing.cancel();
 		}
 
-		BreadcrumbManager bcManager = activeBreadcrumbManagers.get(editor);
-		
 		Job parseJob = new Job("ConfigLens: Parsing " + editor.getTitle()) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				com.configlens.core.parser.ParserControl control = 
+				com.configlens.core.parser.ParserControl control =
 				    new com.configlens.core.parser.ParserControl(content.length());
 				control.setCancellationSupplier(() -> monitor.isCanceled());
-				
+
 				DocumentModelManager.getInstance().refresh(editor.getEditorInput(), content, control);
-				
+
 				if (monitor.isCanceled() || control.isCancelled()) {
 					return Status.CANCEL_STATUS;
 				}
 
 				ConfigTree tree = DocumentModelManager.getInstance().getTree(editor.getEditorInput());
-				if (bcManager != null) {
+				if (bcManager != null && tree != null) {
 					bcManager.updateTree(tree);
 				}
 
 				if (tree != null) {
 					new AiAnalysisJob(editor, tree).schedule();
-					// Notify FlatView immediately so it can populate without waiting for focus
 					com.configlens.ui.views.FlatView.notifyTreeUpdated(editor.getEditorInput());
-					Display.getDefault().asyncExec(() -> {
-						if (selectionListeners.containsKey(editor)) {
-							secretHighlighter.highlightSecrets(editor, tree.getRootNode());
-						}
-					});
 				}
+				
+				// Always re-run secret highlighting after parse (on UI thread)
+				Display.getDefault().asyncExec(() -> {
+					try {
+						secretHighlighter.highlightSecrets(editor);
+					} catch (Exception ex) {
+						// Editor may have been disposed
+					}
+				});
+				
 				return Status.OK_STATUS;
 			}
 		};
