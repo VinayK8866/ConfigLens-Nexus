@@ -47,7 +47,7 @@ public final class WorkbenchStartup implements IStartup {
 
             // 3. Show Welcome Page for this version
             org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-            String versionKey = "WELCOME_PAGE_SHOWN_1.0.3";
+            String versionKey = "WELCOME_PAGE_SHOWN_1.0.4";
             if (!store.getBoolean(versionKey)) {
               store.setValue(versionKey, true);
               showWelcomePageAfterDelay();
@@ -83,8 +83,13 @@ public final class WorkbenchStartup implements IStartup {
           org.osgi.framework.FrameworkUtil.getBundle(WorkbenchStartup.class),
           new org.eclipse.core.runtime.Path("intro/WelcomePage.html"), null);
       if (url != null) {
-        org.eclipse.ui.PlatformUI.getWorkbench().getBrowserSupport().createBrowser("configlens.welcome").openURL(
-            org.eclipse.core.runtime.FileLocator.toFileURL(url));
+        org.eclipse.ui.browser.IWorkbenchBrowserSupport support = org.eclipse.ui.PlatformUI.getWorkbench().getBrowserSupport();
+        support.createBrowser(
+            org.eclipse.ui.browser.IWorkbenchBrowserSupport.AS_EDITOR, 
+            "configlens.welcome", 
+            "ConfigLens Welcome", 
+            "Getting started with ConfigLens"
+        ).openURL(org.eclipse.core.runtime.FileLocator.toFileURL(url));
       }
     } catch (Exception e) {
       // Ignore if browser cannot be opened
