@@ -27,7 +27,10 @@ jobs:
 
     - name: Package Update Site
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      run: mvn package -DskipTests --projects com.configlens.updatesite -am -Pjgit-ts
+      run: |
+        mvn package -DskipTests --projects com.configlens.updatesite -am -Pjgit-ts
+        # Inject premium landing page into the built repository
+        cp -rv com.configlens.updatesite/web/* com.configlens.updatesite/target/repository/
 
     - name: Deploy to GitHub Pages
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
