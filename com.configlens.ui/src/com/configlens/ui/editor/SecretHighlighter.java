@@ -10,11 +10,12 @@
  *******************************************************************************/
 package com.configlens.ui.editor;
 
-import com.configlens.core.model.ConfigNode;
+import com.configlens.core.model.SecretResult;
 import com.configlens.core.parser.SecretDetector;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -22,23 +23,30 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Scans the configuration tree for secrets and places visual markers
- * (Annotations)
- * in the Eclipse editor gutter and text area.
+ * Scans the document content line-by-line for secrets and places visual markers
+ * (yellow Annotations) in the Eclipse editor.
+ *
+ * <p>Uses the same line-based scanning as SecretMarkerManager, which guarantees
+ * that {@code # configlens-ignore} is always respected — regardless of how the
+ * YAML/JSON parser mapped line numbers onto nodes.</p>
  */
 public final class SecretHighlighter {
 
 	private static final String ANNOTATION_TYPE = "com.configlens.ui.secretAnnotation";
 	private final SecretDetector detector = new SecretDetector();
 
-	public void highlightSecrets(ITextEditor editor, ConfigNode root) {
+	/**
+	 * Rescans the entire document and refreshes yellow secret annotations.
+	 * Must be called from the UI thread.
+	 */
+	public void highlightSecrets(ITextEditor editor) {
 		IAnnotationModel model = editor.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
 		IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		if (model == null || document == null)
 			return;
 
-		// 1. Clear existing secret annotations
 		synchronized (model) {
+			// 1. Clear existing secret annotations
 			List<Annotation> toRemove = new ArrayList<>();
 			Iterator<?> it = model.getAnnotationIterator();
 			while (it.hasNext()) {
@@ -51,56 +59,40 @@ public final class SecretHighlighter {
 				model.removeAnnotation(ann);
 			}
 
-			// 2. Scan tree and add new ones
-			scan(root, model, document);
-		}
-	}
-
-	private void scan(ConfigNode node, IAnnotationModel model, IDocument document) {
-		if (node.getValue().isPresent()) {
-			boolean ignored = false;
+			// 2. Re-scan line by line (same logic as SecretMarkerManager)
 			try {
-				int line = node.getStartLine() - 1;
-				if (line >= 0 && line < document.getNumberOfLines()) {
-					int lineOffset = document.getLineOffset(line);
-					int lineLength = document.getLineLength(line);
+				int lineCount = document.getNumberOfLines();
+				for (int i = 0; i < lineCount; i++) {
+					int lineOffset = document.getLineOffset(i);
+					int lineLength = document.getLineLength(i);
 					String lineText = document.get(lineOffset, lineLength);
-					// Respect ignore comment on this specific line only
-					if (lineText.contains("configlens-ignore")) {
-						ignored = true;
+
+					// SecretDetector.scanLine() already checks for # configlens-ignore
+					List<SecretResult> results = detector.scanLine(lineText, i + 1);
+
+					for (SecretResult result : results) {
+						// Highlight only the matched secret value, not the entire line
+						int start = lineOffset + result.startColumn();
+						int length = result.endColumn() - result.startColumn();
+						if (length <= 0) length = lineLength; // fallback
+
+						String msg = result.message();
+						Annotation ann = new Annotation(ANNOTATION_TYPE, false, msg);
+						model.addAnnotation(ann, new Position(start, length));
 					}
 				}
-			} catch (Exception e) {}
-
-			if (!ignored && detector.isSecret(node.getKey(), node.getValue().get().toString())) {
-				addAnnotation(node, model, document);
+			} catch (BadLocationException e) {
+				// Ignore — document may have changed concurrently
 			}
-		}
-		// Always recurse into children regardless of whether this node was ignored
-		for (ConfigNode child : node.getChildren()) {
-			scan(child, model, document);
 		}
 	}
 
-	private void addAnnotation(ConfigNode node, IAnnotationModel model, IDocument document) {
-		try {
-			int line = node.getStartLine() - 1; // 1-based to 0-based
-			if (line < 0 || line >= document.getNumberOfLines())
-				return;
-
-			int lineOffset = document.getLineOffset(line);
-			
-			// Use precise start/end columns to only highlight the value, not the entire line/key
-			int start = lineOffset + node.getStartColumn();
-			int length = node.getEndColumn() - node.getStartColumn();
-			
-			if (length <= 0) {
-				length = document.getLineLength(line) - node.getStartColumn();
-			}
-
-			Annotation ann = new Annotation(ANNOTATION_TYPE, false, "Potential secret detected: " + node.getKey());
-			model.addAnnotation(ann, new Position(start, length));
-		} catch (Exception e) {
-		}
+	/**
+	 * @deprecated Use {@link #highlightSecrets(ITextEditor)} which scans by line.
+	 * This overload is kept only for backward compatibility with the parse-job call.
+	 */
+	public void highlightSecrets(ITextEditor editor,
+			com.configlens.core.model.ConfigNode ignoredRoot) {
+		highlightSecrets(editor);
 	}
 }

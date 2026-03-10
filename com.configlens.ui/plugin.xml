@@ -17,15 +17,6 @@
                id="com.configlens.ui.menu"
                label="ConfigLens"
                icon="icons/logo.png">
-            <visibleWhen checkEnabled="false">
-               <with variable="activeEditorInput">
-                  <test
-                        property="org.eclipse.core.resources.name"
-                        args=".yaml,.yml,.json,.env"
-                        value="*">
-                  </test>
-               </with>
-            </visibleWhen>
             <command
                   commandId="com.configlens.ui.command.copyPath"
                   label="Copy Absolute Path (Spring compatible)"
@@ -83,12 +74,14 @@
       </handler>
    </extension>
    <!-- Annotations for Secret Detection -->
+   <!-- Note: secretAnnotation is NOT linked to markerType to avoid double-highlighting.
+        The SecretHighlighter creates these annotations directly in the annotation model.
+        The SecretMarkerManager creates problem markers separately (visible in Problems view). -->
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
       <type
             name="com.configlens.ui.secretAnnotation"
-            label="Potential Secret"
-            markerType="org.eclipse.core.resources.problemmarker">
+            label="Potential Secret">
       </type>
       <type
             name="com.configlens.ui.ghostAnnotation"

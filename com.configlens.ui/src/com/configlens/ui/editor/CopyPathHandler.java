@@ -59,15 +59,32 @@ public final class CopyPathHandler extends AbstractHandler {
       protected IStatus run(IProgressMonitor monitor) {
         ConfigTree tree = DocumentModelManager.getInstance().getTree(textEditor.getEditorInput());
         if (tree == null) {
+          Display.getDefault().asyncExec(() ->
+            org.eclipse.jface.dialogs.MessageDialog.openInformation(
+              Display.getDefault().getActiveShell(),
+              "ConfigLens",
+              "No configuration tree available yet. Wait a moment for the file to parse and try again."));
           return Status.CANCEL_STATUS;
         }
 
         Optional<String> path = resolver.resolvePathAtLine(tree, line);
         if (path.isPresent()) {
           String formattedPath = resolver.formatPath(path.get(), mode);
-          
           // Clipboard access must happen on UI thread
-          Display.getDefault().asyncExec(() -> copyToClipboard(formattedPath));
+          Display.getDefault().asyncExec(() -> {
+            copyToClipboard(formattedPath);
+            // Show brief status message so user knows it worked
+            if (textEditor.getEditorSite() != null) {
+              textEditor.getEditorSite().getActionBars().getStatusLineManager()
+                .setMessage("✓ Copied: " + formattedPath);
+            }
+          });
+        } else {
+          Display.getDefault().asyncExec(() ->
+            org.eclipse.jface.dialogs.MessageDialog.openInformation(
+              Display.getDefault().getActiveShell(),
+              "ConfigLens",
+              "No configuration key found at line " + line + ".\n\nPlace your cursor on a YAML/JSON key line and try again."));
         }
         
         return Status.OK_STATUS;
