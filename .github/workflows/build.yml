@@ -31,8 +31,18 @@ jobs:
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       run: |
         mvn package -DskipTests --projects com.configlens.updatesite -am -Pjgit-ts
-        # Inject premium landing page into the built repository
-        cp -rv com.configlens.updatesite/web/* com.configlens.updatesite/target/repository/
+        
+        # Define destination
+        DEST="com.configlens.updatesite/target/repository"
+        
+        # Inject premium landing page assets
+        cp -rv com.configlens.updatesite/web/* "$DEST/"
+        
+        # Disable Jekyll processing to ensure index.html and CSS are used directly
+        touch "$DEST/.nojekyll"
+        
+        echo "Deployment directory prepared: $DEST"
+        ls -R "$DEST"
 
     - name: Deploy to GitHub Pages
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -40,3 +50,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./com.configlens.updatesite/target/repository
+        force_orphan: true
