@@ -36,11 +36,13 @@ public final class WorkbenchStartup implements IStartup {
           if (window != null) {
             window.getPartService().addPartListener(new EditorLifecycleManager());
             
-            // Show Welcome Page on first launch with a generous delay
+            // Show Welcome Page on first launch of THIS VERSION
+            // Uses a version-specific key so it shows again after updates
             org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-            if (!store.getBoolean("WELCOME_PAGE_SHOWN")) {
+            String versionKey = "WELCOME_PAGE_SHOWN_1.0.2";
+            if (!store.getBoolean(versionKey)) {
+              store.setValue(versionKey, true);
               showWelcomePageAfterDelay();
-              store.setValue("WELCOME_PAGE_SHOWN", true);
             }
           }
         });

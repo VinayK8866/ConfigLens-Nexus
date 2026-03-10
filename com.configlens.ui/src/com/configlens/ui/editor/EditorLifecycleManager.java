@@ -189,12 +189,27 @@ public final class EditorLifecycleManager implements IPartListener2 {
 			Object target = editor.getAdapter(ITextOperationTarget.class);
 			if (target instanceof ISourceViewer viewer && viewer instanceof ITextViewerExtension2 extension) {
 				extension.addPainter(new GhostValuePainter(viewer, projectId));
-				
+
 				// Install YAML Indentation Handlers if applicable
 				String fileName = editor.getEditorInput().getName().toLowerCase();
 				if (fileName.endsWith(".yaml") || fileName.endsWith(".yml")) {
 					YamlIndentationHandler handler = new YamlIndentationHandler();
 					viewer.getTextWidget().addVerifyListener(handler);
+				}
+
+				// Disable Eclipse's projection (folding) for config files.
+				// This removes the white-area artifact with line numbers and minus marks.
+				// We use asyncExec with a delay to ensure the editor is fully rendered first.
+				if (viewer instanceof org.eclipse.jface.text.source.projection.ProjectionViewer projViewer) {
+					Display.getDefault().asyncExec(() -> {
+						try {
+							if (projViewer.isProjectionMode()) {
+								projViewer.disableProjection();
+							}
+						} catch (Exception e) {
+							// Ignore — projection may not be supported
+						}
+					});
 				}
 			}
 		}

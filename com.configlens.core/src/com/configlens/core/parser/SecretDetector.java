@@ -47,7 +47,20 @@ public final class SecretDetector {
    */
   public List<SecretResult> scanLine(String lineText, int lineNumber) {
     List<SecretResult> results = new ArrayList<>();
-    
+
+    // Skip blank lines and pure comment lines (no secrets there)
+    String trimmed = lineText.trim();
+    if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+      return results;
+    }
+
+    // Skip lines that look like pure YAML/JSON structure (no value after colon)
+    // e.g. "aws:" or "  database:" with nothing after
+    if (trimmed.matches("^[\\w.\\-]+:\\s*$") || trimmed.equals("{") || trimmed.equals("}") 
+        || trimmed.equals("[") || trimmed.equals("]")) {
+      return results;
+    }
+
     // Check for ignore comment
     if (lineText.contains(IGNORE_COMMENT)) {
       return results;
