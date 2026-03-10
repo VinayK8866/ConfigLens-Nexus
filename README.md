@@ -4,9 +4,9 @@ Smart YAML, JSON, and .env Editor with Path-Copying, Hierarchical Data Map & Env
 
 **ConfigLens** is an intelligent, high-performance Eclipse IDE plugin that supercharges your experience working with complex configuration files. Specifically designed for massive YAML, JSON, and Properties structures, it offers real-time secret detection, AI-powered contextual tooltips, and deeply integrated visual features that help you understand your config faster.
 
-![ConfigLens Screenshot](https://via.placeholder.com/800x400.png?text=ConfigLens+Screenshot+%28Replace+Me%29) 
+ 
 > *Explore giant configs without losing your context.*
-
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/525d4b84-840c-448f-8f8b-2c996544b928" />
 ---
 
 ## 🌟 Key Features
