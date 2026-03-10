@@ -111,6 +111,15 @@ public final class EditorLifecycleManager implements IPartListener2 {
 		// 5. Trigger Initial Parse + Secret Scan in Background
 		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		if (doc != null) {
+			// CONVERT TABS TO SPACES IMMEDIATELY
+			// This removes the "Tabs not allowed" reddish lines from external validators
+			try {
+				String content = doc.get();
+				if (content.contains("\t")) {
+					doc.set(content.replace("\t", "  "));
+				}
+			} catch (Exception e) {}
+
 			// Listen for changes and re-scan
 			doc.addDocumentListener(new org.eclipse.jface.text.IDocumentListener() {
 				@Override
@@ -197,18 +206,32 @@ public final class EditorLifecycleManager implements IPartListener2 {
 					viewer.getTextWidget().addVerifyListener(handler);
 				}
 
-				// Disable Eclipse's projection (folding) for config files.
-				// This removes the white-area artifact with line numbers and minus marks.
-				// We use asyncExec with a delay to ensure the editor is fully rendered first.
+				// CLEANEST WAY TO HIDE FOLDING RULER: Use Editor's Preference Store
+				// This prevents the "White Area" and "Minus Mark" artifacts definitively.
+				try {
+					// Use the adapter to find the pref store if possible
+					org.eclipse.jface.preference.IPreferenceStore store = (org.eclipse.jface.preference.IPreferenceStore) editor.getAdapter(org.eclipse.jface.preference.IPreferenceStore.class);
+					if (store == null && editor instanceof org.eclipse.ui.texteditor.AbstractTextEditor ate) {
+						// Fallback to internal pref store access
+						java.lang.reflect.Method m = org.eclipse.ui.texteditor.AbstractTextEditor.class.getDeclaredMethod("getPreferenceStore");
+						m.setAccessible(true);
+						store = (org.eclipse.jface.preference.IPreferenceStore) m.invoke(editor);
+					}
+					
+					if (store != null) {
+						// Hides the folding ruler definitively for this editor
+						store.setValue("org.eclipse.ui.texteditors.AbstractDecoratedTextEditor.showFoldingRuler", false);
+					}
+				} catch (Exception e) {}
+
+				// Force disable projection as well
 				if (viewer instanceof org.eclipse.jface.text.source.projection.ProjectionViewer projViewer) {
 					Display.getDefault().asyncExec(() -> {
 						try {
 							if (projViewer.isProjectionMode()) {
 								projViewer.disableProjection();
 							}
-						} catch (Exception e) {
-							// Ignore — projection may not be supported
-						}
+						} catch (Exception e) {}
 					});
 				}
 			}

@@ -53,8 +53,15 @@ public final class BreadcrumbInjector {
 				layout.marginWidth = 0;
 				layout.verticalSpacing = 0;
 				parent.setLayout(layout);
-			} catch (Exception e) {
-				// Fallback: If we can't change layout, injection might look poor but won't crash
+			} catch (Exception e) {}
+		}
+
+		// SAFETY: Ensure all existing children (especially the editor) have filling GridData
+		// This prevents the "White Area" glitch where the editor gets squashed or collapsed.
+		for (Control child : parent.getChildren()) {
+			if (child.getLayoutData() == null || !(child.getLayoutData() instanceof GridData)) {
+				GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+				child.setLayoutData(gd);
 			}
 		}
 
@@ -62,12 +69,9 @@ public final class BreadcrumbInjector {
 		BreadcrumbComposite breadcrumb = new BreadcrumbComposite(parent, SWT.NONE);
 		breadcrumb.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
-		// Fix layout for the editor body itself
-		if (editorComposite.getLayoutData() == null || !(editorComposite.getLayoutData() instanceof GridData)) {
-			editorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		}
+		// Move breadcrumb to the top of the composite stack
+		breadcrumb.moveAbove(null);
 
-		breadcrumb.moveAbove(editorComposite);
 		parent.layout(true, true);
 		return breadcrumb;
 	}
