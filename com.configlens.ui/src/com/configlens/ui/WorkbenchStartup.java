@@ -27,30 +27,40 @@ public final class WorkbenchStartup implements IStartup {
 
   @Override
   public void earlyStartup() {
-    // Schedule startup logic in a non-blocking Job to prevent Eclipse hangs
-    Job startupJob = new Job("ConfigLens: Startup Onboarding") {
+    // Schedule startup logic in a non-blocking Job to ensure Eclipse is responsive
+    Job startupJob = new Job("ConfigLens: Global Initializer") {
       @Override
       protected IStatus run(org.eclipse.core.runtime.IProgressMonitor monitor) {
         Display.getDefault().asyncExec(() -> {
-          IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-          if (window != null) {
-            window.getPartService().addPartListener(new EditorLifecycleManager());
+          try {
+            EditorLifecycleManager manager = new EditorLifecycleManager();
             
-            // Show Welcome Page on first launch of THIS VERSION
-            // Uses a version-specific key so it shows again after updates
+            // 1. Hook into future editor events
+            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            if (window != null) {
+              window.getPartService().addPartListener(manager);
+            }
+
+            // 2. ACTIVATE INSTANTLY: Inject into ALL editors already open
+            // This is critical for post-installation UX so features work without tab-switching.
+            manager.initializeExistingEditors();
+
+            // 3. Show Welcome Page for this version
             org.eclipse.jface.preference.IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-            String versionKey = "WELCOME_PAGE_SHOWN_1.0.2";
+            String versionKey = "WELCOME_PAGE_SHOWN_1.0.3";
             if (!store.getBoolean(versionKey)) {
               store.setValue(versionKey, true);
               showWelcomePageAfterDelay();
             }
+          } catch (Exception e) {
+            // Log if startup hooks failed, but don't crash Eclipse
           }
         });
         return Status.OK_STATUS;
       }
     };
     startupJob.setSystem(true);
-    startupJob.schedule(2000); // 2 second delay to let Eclipse initialize
+    startupJob.schedule(1500); // 1.5s delay is optimal to avoid race conditions with workbench startup
   }
 
   private void showWelcomePageAfterDelay() {

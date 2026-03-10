@@ -59,10 +59,24 @@ public final class EditorLifecycleManager implements IPartListener2 {
 		checkAndInject(partRef);
 	}
 
-	private void checkAndInject(IWorkbenchPartReference partRef) {
+	public void checkAndInject(IWorkbenchPartReference partRef) {
 		if (partRef.getPart(false) instanceof ITextEditor editor) {
 			if (isSupported(editor.getEditorInput()) && !selectionListeners.containsKey(editor)) {
 				installEnhancements(editor);
+			}
+		}
+	}
+
+	/**
+	 * Scans all currently open editors in all workbench windows and 
+	 * installs enhancements if they are supported but not yet initialized.
+	 */
+	public void initializeExistingEditors() {
+		for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
+			for (IWorkbenchPage page : window.getPages()) {
+				for (IWorkbenchPartReference partRef : page.getEditorReferences()) {
+					checkAndInject(partRef);
+				}
 			}
 		}
 	}
