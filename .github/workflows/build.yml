@@ -24,25 +24,19 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build with Maven
-      run: mvn clean verify -Pjgit-ts
-
-    - name: Package Update Site
-      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    - name: Build and Package
+      if: success()
       run: |
-        mvn package -DskipTests --projects com.configlens.updatesite -am -Pjgit-ts
+        mvn clean verify -Pjgit-ts -DskipTests=true
         
         # Define destination
         DEST="com.configlens.updatesite/target/repository"
         
-        # Inject premium landing page assets
-        cp -rv com.configlens.updatesite/web/* "$DEST/"
-        
-        # Disable Jekyll processing to ensure index.html and CSS are used directly
-        touch "$DEST/.nojekyll"
+        # Inject premium landing page assets (including hidden files like .nojekyll)
+        cp -rv com.configlens.updatesite/web/. "$DEST/"
         
         echo "Deployment directory prepared: $DEST"
-        ls -R "$DEST"
+        ls -la "$DEST"
 
     - name: Deploy to GitHub Pages
       if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
@@ -51,3 +45,5 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./com.configlens.updatesite/target/repository
         force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
